@@ -32,15 +32,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.listen(1)
     print('the server is ready to receive')
 
-    connectionSocket, addr = s.accept()
+    while True:
+        connectionSocket, addr = s.accept()
 
-    with connectionSocket:
-        print(f"Connected by {addr}")
-        while True:
+        with connectionSocket:
+            print(f"Connected by {addr}")
+
             request = connectionSocket.recv(1024).decode().split()
 
-            if not request:    # connection with client has ended
-                break
+            # if not request:    # connection with client has ended
+            #     break
 
             [oc, op1, op2] = request
             response = ''
