@@ -13,6 +13,19 @@ def compute_result(operator, operand1, operand2):
     elif operator == '/':
         return operand1 / operand2
 
+def check_valid_operands(oc, op1, op2):  # returns True if operands are valid integers, False otherwise
+    try:
+        received_op1 = int(op1)
+        received_op2 = int(op2)
+
+        if oc == '/' and received_op2 == 0:  # division by 0
+            return False
+        else:
+            return True  # valid integer operands and operations
+
+    except ValueError:  # Non-integer data received
+        return False
+
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind(("127.0.0.1", serverPort))
@@ -40,22 +53,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
             else:
 
-                # Check if the received request contains valid integers
-                try:
-                    received_op1 = int(op1)
-                    received_op2 = int(op2)
-
-                    if oc == '/' and received_op2 == 0:  # division by 0
-                        status_code = 630
-                        result = -1
-                    else:
-                        status_code = 200  # Successful integers received
-                        result = compute_result(oc, received_op1, received_op2)
-
-                except ValueError:  # Non-integer data received
+                if check_valid_operands(oc, op1, op2):
+                    status_code = 200  # Successful integers received
+                    result = compute_result(oc, int(op1), int(op2))
+                else:   # non-valid operands
                     status_code = 630
                     result = -1
 
-                response = str(status_code) + " " + str(result)
-                print(' '.join(request) + ' -> ' + response)
-                connectionSocket.sendall(response.encode())
+            # send and print response
+            response = str(status_code) + " " + str(result)
+            print(' '.join(request) + ' -> ' + response)
+            connectionSocket.sendall(response.encode())

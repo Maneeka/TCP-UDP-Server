@@ -5,7 +5,7 @@ serverPORT = 65432  # The port used by the server
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
     clientSocket.connect((serverIP, serverPORT))
-    clientSocket.sendall(b"+ 100 -1")
+    clientSocket.sendall(b"+ 100.1 0")
     data = clientSocket.recv(1024)
 
 print(f"Received {data!r}")
