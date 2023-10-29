@@ -36,12 +36,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         connectionSocket, addr = s.accept()
 
         with connectionSocket:
-            print(f"Connected by {addr}")
-
             request = connectionSocket.recv(1024).decode().split()
-
-            # if not request:    # connection with client has ended
-            #     break
 
             [oc, op1, op2] = request
             response = ''
@@ -57,7 +52,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 if check_valid_operands(oc, op1, op2):
                     status_code = 200  # Successful integers received
                     result = compute_result(oc, int(op1), int(op2))
-                else:   # non-valid operands
+                else:   # non-valid operands, or division by 0
                     status_code = 630
                     result = -1
 

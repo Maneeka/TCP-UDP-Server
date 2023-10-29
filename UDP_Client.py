@@ -1,7 +1,7 @@
 import socket
 
-serverIP = "127.0.0.1"  # The server's hostname or IP address
-serverPORT = 65432  # The port used by the server
+serverIP = "127.0.0.1"
+serverPort = 65432
 
 filename = input("Enter input file name: ")
 
@@ -13,10 +13,11 @@ with open(filename, "r") as file:
         # process line
         print("Input request: " + line)
 
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clientSocket:
-            clientSocket.connect((serverIP, serverPORT))
-            clientSocket.sendall(line.encode())
-            [status_code, result] = clientSocket.recv(1024).decode().split()
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as clientSocket:
+            clientSocket.sendto(line.encode(), (serverIP, serverPort))
+            response, serverAddr = clientSocket.recvfrom(1024)
+
+            [status_code, result] = response.decode().split()
 
             if status_code == "200":
                 print("The result is: " + result)
