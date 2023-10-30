@@ -1,9 +1,10 @@
 import socket
+import sys
 
 serverIP = "127.0.0.1"
 serverPort = 65432
 
-filename = input("Enter input file name: ")
+filename = sys.argv[1]
 
 # Open the file in read mode
 with open(filename, "r") as file:

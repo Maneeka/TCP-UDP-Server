@@ -32,31 +32,36 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.listen(1)
     print('the server is ready to receive')
 
-    while True:
-        connectionSocket, addr = s.accept()
+    try:
+        while True:
+            connectionSocket, addr = s.accept()
 
-        with connectionSocket:
-            request = connectionSocket.recv(1024).decode().split()
+            with connectionSocket:
+                request = connectionSocket.recv(1024).decode().split()
 
-            [oc, op1, op2] = request
-            response = ''
-            status_code = result = -1
+                [oc, op1, op2] = request
+                response = ''
+                status_code = result = -1
 
-            # check validity of request
-            if oc not in ('+', '-', '*', '/'):
-                status_code = 620  # send error code 620 with -1 result
-                result = -1
-
-            else:
-
-                if check_valid_operands(oc, op1, op2):
-                    status_code = 200  # Successful integers received
-                    result = compute_result(oc, int(op1), int(op2))
-                else:   # non-valid operands, or division by 0
-                    status_code = 630
+                # check validity of request
+                if oc not in ('+', '-', '*', '/'):
+                    status_code = 620  # send error code 620 with -1 result
                     result = -1
 
-            # send and print response
-            response = str(status_code) + " " + str(result)
-            print(' '.join(request) + ' -> ' + response)
-            connectionSocket.sendall(response.encode())
+                else:
+
+                    if check_valid_operands(oc, op1, op2):
+                        status_code = 200  # Successful integers received
+                        result = compute_result(oc, int(op1), int(op2))
+                    else:   # non-valid operands, or division by 0
+                        status_code = 630
+                        result = -1
+
+                # send and print response
+                response = str(status_code) + " " + str(result)
+                print(' '.join(request) + ' -> ' + response)
+                connectionSocket.sendall(response.encode())
+
+    except KeyboardInterrupt:
+        s.close()
+        connectionSocket.close()
